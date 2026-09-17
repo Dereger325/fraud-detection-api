@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.141.1",
+    "google-genai>=2.24.0",
     "ipykernel>=7.3.0",
     "joblib>=1.5.3",
     "jupyterlab>=4.6.3",
