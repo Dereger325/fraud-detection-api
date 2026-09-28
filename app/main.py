@@ -77,4 +77,3 @@ Explain in 2-3 plain-English sentences why this transaction was likely flagged, 
 
 
 
-#print(response.text)
