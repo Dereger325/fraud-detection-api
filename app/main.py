@@ -28,7 +28,10 @@ import shap
 from google import genai
 client = genai.Client(api_key=api_key)
 
-background = pd.read_pickle("app/ml/background.pkl")
+import logging
+logger = logging.getLogger(__name__)
+
+background = pd.read_pickle("app/ml/background.pkl") 
 explainer = shap.TreeExplainer(
     model,
     data=background,
@@ -36,6 +39,7 @@ explainer = shap.TreeExplainer(
     model_output="probability"
 )
 @app.post("/explain")       
+
 
 def explain(transaction : Transaction):
     df = pd.DataFrame([transaction.model_dump()])
@@ -63,16 +67,37 @@ Important constraints:
 
 Explain in 2-3 plain-English sentences why this transaction was likely flagged, for a non-technical fraud analyst, using only what's stated above."""
 
-    response = client.models.generate_content(
-    model="gemini-3.6-flash",
-    contents=prompt
-    )
+   # response = client.models.generate_content(
+    #model="gemini-3.6-flash",
+    #contents=prompt
+    #)
+    #return{
+     #   "fraud_probability": round(float(fraud_proba), 4),
+      #  "prediction" : prediction,
+       # "threshold_used" : THRESHOLD,
+        #"top_features" : top_5_values,
+        #"response" : response.text
+    #}
+    explanation = None
+    explanation_error = None
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=prompt
+            )
+        explanation = response.text
+        
+    except Exception:
+        logger.exception("Gemini Explanation failed")
+        explanation_error = "Explanation temporarily unavailable"
+
     return{
         "fraud_probability": round(float(fraud_proba), 4),
         "prediction" : prediction,
         "threshold_used" : THRESHOLD,
         "top_features" : top_5_values,
-        "response" : response.text
+        "explanation" : explanation,
+        "explanation_error": explanation_error
     }
 
 
