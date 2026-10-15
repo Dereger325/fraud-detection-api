@@ -7,6 +7,10 @@ app = FastAPI(title = "Fraud Detection API")
 model = joblib.load("app/ml/model.pkl")
 THRESHOLD = 0.28
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/predict")
 def predict(transaction: Transaction):
     df = pd.DataFrame([transaction.model_dump()])
